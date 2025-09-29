@@ -40,6 +40,15 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// Seed data khi chạy app lần đầu
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var userManager = services.GetRequiredService<UserManager<User>>();
+    var roleManager = services.GetRequiredService<RoleManager<Role>>();
+    await ApplicationDbContextSeed.SeedAsync(userManager, roleManager);
+}
+
 // Kích hoạt CORS
 app.UseCors("AllowFrontend");
 
