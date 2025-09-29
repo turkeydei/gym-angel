@@ -17,13 +17,13 @@ GymAngel/
 Setup
 1. **Clone repo**
    git clone https://github.com/turkeydei/gym-angel.git
-Install dependencies : 
+2. **Install dependencies :**  
 -dotnet restore
-Create migration (if first time):
+3. **Create migration (if first time):** 
 -dotnet ef migrations add InitialCreate -p GymAngel.Data -s GymAngel.Api
-Update database :
+4. **Update database :**
 -dotnet ef database update -p GymAngel.Data -s GymAngel.Api
-Run the API :
+5. Run the API :
 run tại project GymAngel.API
 -dotnet run
 
