@@ -46,7 +46,8 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var userManager = services.GetRequiredService<UserManager<User>>();
     var roleManager = services.GetRequiredService<RoleManager<Role>>();
-    await ApplicationDbContextSeed.SeedAsync(userManager, roleManager);
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    await ApplicationDbContextSeed.SeedAsync(userManager, roleManager, context);
 }
 
 // Kích hoạt CORS

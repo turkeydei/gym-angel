@@ -13,7 +13,8 @@ namespace GymAngel.Domain.Entities
     {
         public string FullName { get; set; } = null!;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public Boolean MembershipStatus { get; set; }
         public DateTime? MembershipExpiry { get; set; }
-        public DateTime MembershipStart { get; set; }
+        public DateTime? MembershipStart { get; set; }
     }
 }
