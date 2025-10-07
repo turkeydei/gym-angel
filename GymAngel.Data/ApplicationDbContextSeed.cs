@@ -28,7 +28,9 @@ namespace GymAngel.Data
                     UserName = "admin",
                     Email = "admin@gymangel.com",
                     FullName = "System Admin",
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow,
+                    EmailConfirmed=true,
+
                 };
 
                 await userManager.CreateAsync(admin, "Admin@123");
