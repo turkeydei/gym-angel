@@ -45,9 +45,10 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// 4️⃣ Đăng ký AuthService
+// 4️⃣ Đăng ký Service
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+builder.Services.AddScoped<EmailService>();
 
 // 5️⃣ CORS
 builder.Services.AddCors(options =>

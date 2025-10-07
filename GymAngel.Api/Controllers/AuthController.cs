@@ -16,10 +16,11 @@ namespace GymAngel.Api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
-
-        public AuthController(IAuthService authService)
+        private readonly EmailService _emailService;
+        public AuthController(IAuthService authService, EmailService emailService)
         {
             _authService = authService;
+            _emailService = emailService;
         }
 
         [HttpPost("login")]
@@ -28,7 +29,10 @@ namespace GymAngel.Api.Controllers
             var result = await _authService.LoginAsync(dto);
             if (!result.Success)
                 return BadRequest(new { message = result.Message });
+            //await _emailService.SendEmailAsync("chikietsg@gmail.com", "Test Mail", "<b>Gửi thử thành công!</b>");
             return Ok(new { token = result.Token });
         }
+     
+
     }
 }
