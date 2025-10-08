@@ -10,5 +10,6 @@ namespace GymAngel.Business.Services.Auth
     public interface IAuthService
     {
         Task<LoginResultDTO> LoginAsync(LoginDTO dto);
+        Task<string> RegisterAsync(RegisterDTO dto);
     }
 }

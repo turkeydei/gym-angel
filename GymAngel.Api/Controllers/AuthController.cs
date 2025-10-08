@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using GymAngel.Data;
 using GymAngel.Domain.Entities;
 using GymAngel.Business.Services.Auth;
+using GymAngel.Business.DTOs.AuthDTOs;
 
 namespace GymAngel.Api.Controllers
 {
@@ -32,7 +33,26 @@ namespace GymAngel.Api.Controllers
             //await _emailService.SendEmailAsync("chikietsg@gmail.com", "Test Mail", "<b>Gửi thử thành công!</b>");
             return Ok(new { token = result.Token });
         }
-     
+
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterDTO dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                // Gọi service, nhận chuỗi kết quả
+                string message = await _authService.RegisterAsync(dto);
+                return Ok(new { message });
+            }
+            catch (Exception ex)
+            {
+                // Nếu service ném lỗi, trả về 400
+                return BadRequest(new { error = ex.Message });
+            }
+        }
 
     }
 }
