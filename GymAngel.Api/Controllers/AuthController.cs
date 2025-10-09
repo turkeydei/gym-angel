@@ -53,6 +53,20 @@ namespace GymAngel.Api.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO dto)
+        {
+            var message = await _authService.ForgotPasswordAsync(dto);
+            return Ok(new { message });
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)
+        {
+            var message = await _authService.ResetPasswordAsync(dto);
+            return Ok(new { message });
+        }
+
 
     }
 }
