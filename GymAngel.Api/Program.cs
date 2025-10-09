@@ -1,18 +1,21 @@
 ﻿using GymAngel.Data;
 using GymAngel.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.SqlServer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using GymAngel.Business.Services;
+using GymAngel.Business.Services.Auth;
+using GymAngel.Business.Services.JWT;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//dbcontext
+// 1️⃣ DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
-// Identity
+// 2️⃣ Identity
 builder.Services.AddIdentity<User, Role>(options =>
 {
     options.Password.RequireNonAlphanumeric = false;
@@ -21,35 +24,62 @@ builder.Services.AddIdentity<User, Role>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
+// 3️⃣ JWT Config
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]))
+    };
+});
 
-// Thêm CORS
+// 4️⃣ Đăng ký Service
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+builder.Services.AddScoped<EmailService>();
+
+// 5️⃣ CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:3000", "http://localhost:4200") // React & Angular
+            policy.WithOrigins("http://localhost:3000", "http://localhost:4200")
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
 });
 
+// 6️⃣ Swagger & Controller
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Seed data khi chạy app lần đầu
+// 7️⃣ Seed Data
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var userManager = services.GetRequiredService<UserManager<User>>();
     var roleManager = services.GetRequiredService<RoleManager<Role>>();
-    await ApplicationDbContextSeed.SeedAsync(userManager, roleManager);
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    await ApplicationDbContextSeed.SeedAsync(userManager, roleManager, context);
 }
 
-// Kích hoạt CORS
+// 8️⃣ Middleware Pipeline
 app.UseCors("AllowFrontend");
 
 if (app.Environment.IsDevelopment())
@@ -58,6 +88,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseHttpsRedirection();
+
+// ⚠️ Bật Authentication & Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 

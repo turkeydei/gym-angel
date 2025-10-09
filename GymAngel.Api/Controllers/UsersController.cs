@@ -37,6 +37,7 @@ namespace GymAngel.Api.Controllers
                     user.CreatedAt,
                     user.MembershipStart,
                     user.MembershipExpiry,
+                    user.EmailConfirmed,
                     Roles = roles
                 });
             }
