@@ -101,3 +101,42 @@
 }
 
 document.addEventListener('DOMContentLoaded', () => new ModernBrutalistSignupForm());
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('signupForm');
+    const successBox = document.getElementById('successMessage');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const userName = document.getElementById('username').value.trim();
+        const fullName = document.getElementById('name').value.trim();
+        const email    = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const confirm  = document.getElementById('confirmPassword').value.trim();
+
+        if (password !== confirm) {
+            document.getElementById('confirmError').textContent = 'Passwords do not match';
+            return;
+        }
+
+        try {
+            const res = await fetch(`${window.__ENV__.API_BASE}/api/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ UserName: userName, Email: email, FullName: fullName, Password: password })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                successBox.classList.add('show');
+                setTimeout(() => (window.location.href = 'signin.html'), 2000);
+            } else {
+                // Controller có thể trả { message } hoặc { error }
+                alert(data.message || data.error || 'Registration failed');
+            }
+        } catch (err) {
+            alert(`Network error: ${err.message}`);
+        }
+    });
+});
+
