@@ -30,7 +30,6 @@ namespace GymAngel.Api.Controllers
             var result = await _authService.LoginAsync(dto);
             if (!result.Success)
                 return BadRequest(new { message = result.Message });
-            //await _emailService.SendEmailAsync("chikietsg@gmail.com", "Test Mail", "<b>Gửi thử thành công!</b>");
             return Ok(new { token = result.Token });
         }
 
@@ -66,7 +65,18 @@ namespace GymAngel.Api.Controllers
             var message = await _authService.ResetPasswordAsync(dto);
             return Ok(new { message });
         }
-
+        [HttpPost("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailDTO dto)
+        {
+            var message = await _authService.ConfirmEmailAsync(dto);
+            return Ok(new { message });
+        }
+        [HttpPost("resend-confirm-email")]
+        public async Task<IActionResult> ResendConfirmEmail([FromBody] ForgotPasswordDTO dto)
+        {
+            var message = await _authService.ResendConfirmEmailAsync(dto);
+            return Ok(new { message });
+        }
 
     }
 }

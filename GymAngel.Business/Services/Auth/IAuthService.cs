@@ -13,5 +13,7 @@ namespace GymAngel.Business.Services.Auth
         Task<string> RegisterAsync(RegisterDTO dto);
         Task<string> ForgotPasswordAsync(ForgotPasswordDTO dto);
         Task<string> ResetPasswordAsync(ResetPasswordDTO dto);
+        Task<string> ConfirmEmailAsync(ConfirmEmailDTO dto);
+        Task<string> ResendConfirmEmailAsync(ForgotPasswordDTO dto);
     }
 }
