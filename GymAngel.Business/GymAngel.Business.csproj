@@ -16,4 +16,8 @@
     <ProjectReference Include="..\GymAngel.Domain\GymAngel.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTOs\AuthDTOs\" />
+  </ItemGroup>
+
 </Project>
